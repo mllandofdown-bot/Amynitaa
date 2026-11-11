@@ -11,6 +11,7 @@ jobs:
       - run: mkdir -p AmyNitaMenu/app/src/main/res/raw && cp "$(ls *.mp3 | head -1)" AmyNitaMenu/app/src/main/res/raw/lagu.mp3
       - run: sudo apt-get install -y imagemagick
       - run: convert "$(ls *.png *.jpg *.jpeg 2>/dev/null | head -1)" -resize 192x192^ -gravity center -extent 192x192 AmyNitaMenu/app/src/main/res/drawable-nodpi/ic_icon.png
+      - run: grep -q 'android:icon' AmyNitaMenu/app/src/main/AndroidManifest.xml || sed -i 's|<application|<application android:icon="@drawable/ic_icon"|' AmyNitaMenu/app/src/main/AndroidManifest.xml
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
