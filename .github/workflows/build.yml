@@ -1,0 +1,26 @@
+name: Build APK
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: unzip -q AmyNitaMenu*.zip
+      - run: mkdir -p AmyNitaMenu/app/src/main/res/raw && cp "$(ls *.mp3 | head -1)" AmyNitaMenu/app/src/main/res/raw/lagu.mp3
+      - run: sudo apt-get install -y imagemagick
+      - run: convert "$(ls *.png *.jpg *.jpeg 2>/dev/null | head -1)" -resize 192x192^ -gravity center -extent 192x192 AmyNitaMenu/app/src/main/res/drawable-nodpi/ic_icon.png
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.5
+      - run: gradle assembleDebug
+        working-directory: AmyNitaMenu
+      - uses: actions/upload-artifact@v4
+        with:
+          name: app-debug
+          path: AmyNitaMenu/app/build/outputs/apk/debug/app-debug.apk
